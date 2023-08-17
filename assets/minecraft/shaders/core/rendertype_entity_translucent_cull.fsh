@@ -9,8 +9,8 @@ uniform float FogStart;
 uniform float FogEnd;
 uniform vec4 FogColor;
 
-in int isGUI;
-in int isHand;
+flat in int isGUI;
+flat in int isHand;
 in float zpos;
 in float vertexDistance;
 in vec4 vertexColor;
@@ -27,17 +27,15 @@ bool roughly_equal(float num1, float num2, float threshold) {
 void main() {
     vec4 color = texture(Sampler0, texCoord0) * vertexColor * ColorModulator;
 	
-	float alpha255 = textureLod(Sampler0, texCoord0, 0.0).a * 255.0; // Take the alpha from the texture's LOD so it doesn't have any issues (this has hurt me before with VDE)
-	float alpha100 = textureLod(Sampler0, texCoord0, 0.0).a * 100.0; // Added to make it easier to work with for more image editors
+	float alpha = textureLod(Sampler0, texCoord0, 0.0).a * 255.0; // Take the alpha from the texture's LOD so it doesn't have any issues (this has hurt me before with VDE)
 	
     if (color.a < 0.1) discard; // Snipped due to size.
-	
-    // updated to 1.19.4 thanks to the der discohund
 
     // Switch used parts of the texture depending on where the model is displayed
     if (isGUI == 0 && roughly_equal(alpha, 253.0, 0.01)) discard;
+    
     if (isGUI == 1) {
-             if (zpos  > 125.0 && roughly_equal(alpha, 254.0, 0.01)) discard;     // Handled as inventory slot
+             if (zpos  > 125.0 && roughly_equal(alpha, 254.0, 0.01)) discard; // Handled as inventory slot
         else if (zpos <= 125.0 && roughly_equal(alpha, 253.0, 0.01)) discard; // Handled as on the player doll
     }
 	
